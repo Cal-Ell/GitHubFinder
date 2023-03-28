@@ -9,7 +9,8 @@ export const GithubProvider = ({children}) => {
     const initialState = {
         users: [],
         user: {},
-        loading: false
+        loading: false,
+        repos: []
     }
     const [state, dispatch] = useReducer(GithubReducer, initialState);
 
@@ -60,6 +61,29 @@ export const GithubProvider = ({children}) => {
         }
     };
 
+    const getUserRepos = async (login) => {
+        setLoading();
+        const params = new URLSearchParams({
+            sort: 'created',
+            per_page: 10
+        })
+        try {
+            const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`, {
+                headers: {
+                    Authorization: `token ${GITHUB_TOKEN}`
+                }
+            });
+            const data = await response.json();
+            dispatch({
+                type: 'GET_REPOS',
+                payload: data,
+            });
+        } catch(e){
+            console.error(e);
+        }
+    };
+
+
     const setLoading = () => {
         dispatch({
             type: 'SET_LOADING'
@@ -76,9 +100,11 @@ export const GithubProvider = ({children}) => {
         users: state.users,
         user: state.user,
         loading: state.loading,
+        repos: state.repos,
         searchUsers,
         clearUsers,
-        getUser
+        getUser,
+        getUserRepos
     }}>
         {children}
     </GithubContext.Provider>
