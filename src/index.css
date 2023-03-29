@@ -6,3 +6,13 @@
     border-radius: 0.5rem;
     opacity: 0.45;
 }
+
+.jumbotron-section {
+    z-index: -1;
+    background-image: url(./components/assets/Github.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 300px;
+    opacity: 0.4;
+}
