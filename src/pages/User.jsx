@@ -5,16 +5,25 @@ import {FaCodepen, FaStore, FaUserFriends, FaUsers} from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Spinner from '../components/layout/Spinner';
 import RepoList from '../components/repos/RepoList';
+import {getUserAndRepos} from '../context/github/GithubActions';
 
 const User = () => {
-    const {getUser, user, loading, getUserRepos, repos} = useContext(GithubContext);
+    const {user, repos, dispatch, loading} = useContext(GithubContext);
     const params = useParams()
 
     useEffect(() => {
-        getUser(params.login);
-        getUserRepos(params.login);
-        //eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        dispatch({
+            type:'SET_LOADING'
+        });
+        const getUserData = async () => {
+            const userData = await getUserAndRepos(params.login);
+            dispatch({
+                type: 'GET_USER_AND_REPOS',
+                payload: userData
+            })
+       };
+       getUserData();
+    }, [dispatch, params.login]);
 
     const {
         name,
@@ -46,7 +55,7 @@ const User = () => {
                     </Link>
                 </div>
                 <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 md:grid-cols-3 mb-8 md:gap-8">
-                    <div className="custon-card-image mb-6 md:mb-0">
+                    <div className="custom-card-image mb-6 md:mb-0">
                         <div className="rounded-lg shadow-xl card image-full">
                             <figure>
                                 <img src={avatar_url} alt='' />
